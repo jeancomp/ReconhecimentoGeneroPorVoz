@@ -14,12 +14,6 @@ print('\n')
 # Carregando dataset
 dataset = pd.read_csv('voice.csv')
 
-# Figura 1
-# Total genero masculino x feminino
-#print(dataset['label'].value_counts())
-plt.title('Total genero masculino x feminino')
-dataset['label'].value_counts().plot(kind='pie')
-
 # Tabela 1
 print('Imprimi as 5 primeiras linhas da tabela')
 print(dataset.head())
@@ -43,49 +37,33 @@ dataset = dataset.drop('maxdom',axis=1)
 dataset = dataset.drop('dfrange',axis=1)
 dataset = dataset.drop('modindx',axis=1)
 
-# Tabela 2
-print('Imprimi a tabela, depois da remoção de algumas linhas')
+# Tabela 1
+print('Imprimi a tabela depois da remocao de colunas')
 print(dataset.head())
 
-# Dividi os dados em um conjunto de treinamento e teste
-train_features = dataset.iloc[:2218,:-1]
-test_features = dataset.iloc[950:,:-1]
-train_targets = dataset.iloc[:2218,-1]
-test_targets = dataset.iloc[950:,-1]
-
-# Figura 2
-# Correlação das variaveis com um mapa de calor
-# Pra tirar algumas conlusões
-# 1 -
-# 2 -
-#plt.title('Correlação das variaveis com um mapa de calor')
-plt.figure(figsize=(10,10))
-sns.heatmap(train_features.corr(), annot=True, cmap="Blues")
-
-# Figura 3
-# Plotando os dados no grafico barra
-plt.figure(figsize=(9,6))
-sns.barplot(x='meanfreq',y='sd',data=train_features)
+features = dataset.columns.difference(['label'])
+X = dataset[features].values
+y = dataset['label'].values
 
 # Treina o modelo
-tree = DecisionTreeClassifier(criterion='entropy').fit(train_features, train_targets)
+tree = DecisionTreeClassifier(random_state=1986, criterion='gini', max_depth=3)
+tree.fit(X, y)
 
-# Prever as classes de dados novos e não vistos
-prediction = tree.predict(test_features)
-
-# Imprimir os valores da Predicao
-#dataset['resulPredicao'] = (prediction)
-#print(dataset)
-
-# Verifique a precisão
-print("A precisao da acuracia: ", "%",tree.score(test_features, test_targets)*100)
-
-print('\n Teste com 3 casos-Masculino')
 sample1 = [0.059781,  0.064241,  0.032027]
 sample2 = [0.066009,  0.067310,  0.040229]
 sample3 = [0.077316,  0.083829,  0.036718]
+
+# Prever as classes de dados
 prediction = tree.predict([sample1, sample2, sample2])
+
+print('\n Verifique a precisão')
 print(prediction)
+
+# Usando Cross Validation
+scores_dt = cross_val_score(tree, X, y, scoring='accuracy', cv=5)
+
+print('\n Acuracia: ')
+print(scores_dt.mean())
 
 # Imprimi todos os gráficos
 plt.show()

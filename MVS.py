@@ -59,4 +59,4 @@ fig1 = X1.plot.scatter(x='meanfreq', y='sd', title='Frequencia media x Desvio pa
 fig2 = Y1.plot.scatter(x='meanfreq', y='sd', title='Frequencia media x Desvio padrao (female)')
 
 plt.show()
-#  Acuracia:
+#  Acuracia: 0.6748452661422354
